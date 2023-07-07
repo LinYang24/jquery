@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		/*清除默认样式*/
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		ul {
+			list-style: none;
+		}
+
+    .carousel {
+      position: relative;
+      width: 700px;
+      height: 360px;
+      border: 1px solid #000;
+      margin: 50px auto;
+    }
+    .carousel ul li {
+      position: absolute;
+      top: 0;
+      /* width: 140px; */
+      height: 360px;
+      /* 旋转，找出它的 z 轴 */
+      perspective: 50000px;
+      /* 内部子元素要进行 3D 变换，必须保持资源的坐标轴 */
+      transform-style: preserve-3d;
+      /* transform: rotateY(60deg); */
+      /* 过渡动画 */
+      transition: all 1s ease 0s;
+    }
+
+    /* 设置每个 li 的定位位置 */
+    /* 3.改 li 标签定位的位置 */
+    /* .carousel ul li:nth-child(1) {
+      left: 0;
+      transition-delay: 0s;
+    }
+    .carousel ul li:nth-child(2) {
+      left: 140px;
+      transition-delay: 0.1s;
+    }
+    .carousel ul li:nth-child(3) {
+      left: 280px;
+      transition-delay: 0.2s;
+    }
+    .carousel ul li:nth-child(4) {
+      left: 420px;
+      transition-delay: 0.3s;
+    }
+    /* 5.延时时间要修改 */
+    /*.carousel ul li:nth-child(5) {
+      left: 560px;
+      transition-delay: 0.4s;
+    } */
+
+    /* 公共的样式 */
+    .carousel ul li div {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 360px;
+      background-size: 700px 360px;
+    }
+    .carousel ul li div:nth-child(1) {
+      background-image: url(images/pic1.jpg);
+      transform: translateZ(180px);
+    }
+    .carousel ul li div:nth-child(2) {
+      background-image: url(images/pic2.jpg);
+      transform: rotateX(90deg) translateZ(180px);
+    }
+    .carousel ul li div:nth-child(3) {
+      background-image: url(images/pic3.jpg);
+      transform: rotateX(180deg) translateZ(180px);
+    }
+    .carousel ul li div:nth-child(4) {
+      background-image: url(images/pic4.jpg);
+      transform: rotateX(270deg) translateZ(180px);
+    }
+    
+    /* 设置每一个 li 中所有的 div 的背景定位是相同的 */
+    /* 4.修改背景图定位位置 */
+    /* .carousel ul li:nth-child(1) div {
+      background-position: 0 0;
+    }
+    .carousel ul li:nth-child(2) div {
+      background-position: -140px 0;
+    }
+    .carousel ul li:nth-child(3) div {
+      background-position: -280px 0;
+    }
+    .carousel ul li:nth-child(4) div {
+      background-position: -420px 0;
+    }
+    .carousel ul li:nth-child(5) div {
+      background-position: -560px 0;
+    } */
+
+    .btn {
+      display: block;
+      width: 100px;
+      height: 50px;
+      border: 1px solid #000;
+      margin: 0 auto;
+    }
+	</style>
+</head>
+
+<body>
+  <!-- 搭建结构 -->
+  <div class="carousel">
+    <ul>
+      
+    </ul>
+  </div>
+  <input type="button" value="下一张" class="btn">
+	<script src="js/jquery-1.12.4.js"></script>
+	<script>
+    // 获取元素
+    var $carousel = $(".carousel")
+    var $ul = $(".carousel ul");
+    var len = 50;
+    var delay = 0.005;
+    var duration = 2;
+    for (var i = 0 ; i < len; i++) {
+      // 动态生成 li 标签
+      var li = $("<li><div></div><div></div><div></div><div></div></li>");
+      $ul.append(li);
+    }
+    // 获取元素
+    var $lis = $(".carousel ul li");
+    var $btn = $(".btn");
+    // 计算 li 的宽度
+    var liWidth = $carousel.width() / len;
+    // 遍历所有的 li，设置css样式
+    $lis.each(function (i) {
+      $(this).css({
+        "width": liWidth,
+        "left": i * liWidth,
+        "transition-delay": i * delay + "s",
+        "transition-duration": duration + "s"
+      }).children().css("background-position", - i * liWidth + "px 0")
+    })
+    // 信号量编程
+    var sem = 0;
+    // 制作函数节流，设置一个锁
+    var lock = false;
+    //点击按钮，实现 li 标签依次旋转
+    $btn.click(function () {
+      // 判断锁是否是锁住的
+      if (lock) return;
+      // 如果可以运动，瞬间上锁
+      lock = true;
+      // 每次点击，让当前的 li 逆时针旋转 90 度
+      sem -= 90;
+      $lis.css({
+        "transform": "rotateX(" + sem + "deg)"
+      })
+      // 计算总运动时间
+      var time = 1000 * duration + 1000 * delay * (len - 1)
+      // 等所有运动结束后，解开锁
+      setTimeout(function () {
+        lock = false;
+      },time);
+    })
+  </script>
+</body>
+
+</html>
